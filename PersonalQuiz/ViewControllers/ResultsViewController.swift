@@ -13,26 +13,49 @@ class ResultsViewController: UIViewController {
     // 1. Передать сюда массив с ответами
     // 2. Определить наиболее часто встречающийся тип животного
     // 3. Отобразить результаты в соотвствии с этим животным
+    
+    // MARK: - IB Outlets
+    
+    @IBOutlet weak var animalLabel: UILabel!
+    @IBOutlet weak var textLabel: UILabel!
+    
+    // MARK: - Properties
+    
+    var answers: [Answer] = []
+    
+    private var resultAnimal: AnimalType?
+    
+    // MARK: - Life Cycles Methods
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        // Do any additional setup after loading the view.
+        self.navigationItem.setHidesBackButton(true, animated: false)
+        
+        calculateFrequentlyOccurringElement()
+        updateLabels()
     }
-    
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
     
     deinit {
         print("ResultsViewController was been dealocated")
     }
+    
+    // MARK: - Private Methods
+    
+    private func calculateFrequentlyOccurringElement() {
+        var dictionary = [AnimalType: Int]()
+        for item in answers {
+            dictionary[item.type] = (dictionary[item.type] ?? 0) + 1
+        }
+        
+        let maxResult = dictionary.max { a, b in a.value < b.value }
+        resultAnimal = maxResult?.key
+    }
+    
+    private func updateLabels() {
+        guard let resultAnimal = resultAnimal else { return }
 
+        animalLabel.text = "Вы - \(String(resultAnimal.rawValue))!"
+        textLabel.text = resultAnimal.difinition
+    }
 }
