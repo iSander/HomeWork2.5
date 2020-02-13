@@ -21,19 +21,16 @@ class ResultsViewController: UIViewController {
     
     // MARK: - Properties
     
-    var answers: [Answer] = []
-    
-    private var resultAnimal: AnimalType?
+    var answers: [Answer]!
     
     // MARK: - Life Cycles Methods
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        self.navigationItem.setHidesBackButton(true, animated: false)
+        navigationItem.hidesBackButton = true
         
         calculateFrequentlyOccurringElement()
-        updateLabels()
     }
     
     deinit {
@@ -48,14 +45,14 @@ class ResultsViewController: UIViewController {
             dictionary[item.type] = (dictionary[item.type] ?? 0) + 1
         }
         
-        let maxResult = dictionary.max { a, b in a.value < b.value }
-        resultAnimal = maxResult?.key
+        let maxResult = dictionary.max { $0.value > $1.value }
+        guard let resultAnimal = maxResult?.key else { return }
+        
+        updateLabels(withAnimal: resultAnimal)
     }
     
-    private func updateLabels() {
-        guard let resultAnimal = resultAnimal else { return }
-
-        animalLabel.text = "Вы - \(String(resultAnimal.rawValue))!"
-        textLabel.text = resultAnimal.difinition
+    private func updateLabels(withAnimal: AnimalType) {
+        animalLabel.text = "Вы - \(withAnimal.rawValue)!"
+        textLabel.text = withAnimal.difinition
     }
 }
